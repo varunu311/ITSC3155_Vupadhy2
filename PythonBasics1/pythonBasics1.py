@@ -8,7 +8,15 @@
 # Define a function odd_range(num1, num2) that takes a starting number (num1) and an ending number (num2)
 # and returns all odd numbers as an array between num1 (inclusive) and num2 (exclusive)
 def odd_range(num1, num2):
+  arr = []
+
   # YOUR CODE HERE
+  for num in range(num1, num2):
+    # checking condition
+    if num % 2 != 0:
+      arr.append(num)
+
+  return arr
 
   return
 
