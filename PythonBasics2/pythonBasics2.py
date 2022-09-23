@@ -55,13 +55,14 @@ def longest_consecutive_repeating_char(s):
 # and ignore spaces (i.e. case insensitive).
 def is_palindrome(s):
 
-  string = s.lower
-  fliped = string[::-1]
-  print (fliped)
-  tf = False
+  string = str.lower(s)
+  string = string.replace(" ","")
 
-  if fliped == string:
-    tf = True
-    return tf
+  reverse = string[::-1]
+
+  if string == reverse:
+    return True
+
   else:
-    return tf
+    return False
+
