@@ -13,15 +13,18 @@ import re
 # (For our purposes, a number is any character that is 0,1,2,3,4,5,6,7,8, or 9.)
 # Note: Be sure to use RegEx!
 def starts_with_non_number(s):
-  # YOUR CODE HERE
+  match = re.search("^[0-9]", s)
 
-  return
+  if (match == None):
+    return True
+  else:
+    return False
 
 # # Part B. multiple_words
 # Define a function multiple_words(s) that takes a string and returns true
 # if it contains multiple words and false otherwise.
 # (For our purposes, a string has multiple words if it contains any whitespace characters.)
-# Note: Be sure to use RegEx and that it works for any whitespace character 
+# Note: Be sure to use RegEx and that it works for any whitespace character
 # with at least one character on either side!
 def multiple_words(s):
   # YOUR CODE HERE
@@ -38,5 +41,5 @@ def multiple_words(s):
 # Hint: the URL should start with https and end with one of the TLDs
 def reserved_us_tld(s):
   # YOUR CODE HERE
-  
+
   return
