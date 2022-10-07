@@ -11,40 +11,57 @@
 # to n (including n).
 
 def count_threes(n):
-  x = 0
-  if n < 3 and n>-3:
-    return 0
-  else:
-    for i in range(0,n):
-      if i%3 == 0:
-        x = x+1
-      else:
-        pass
+  n = list(str(n))
+  mydict = {}
+  mydict[3] = mydict[6] = mydict[9] = 0
 
-  return x
+  for i in n:
+    j = int(i)
+    if j % 3 == 0 and j != 0:
+      mydict[j] = mydict[j] + 1
+
+  max = 0
+  idx = 0
+
+  for k, v in mydict.items():
+    if v > max:
+      max = v
+      idx = k
+
+  return idx
 
 
 # Part B. longest_consecutive_repeating_char
 # Define a function longest_consecutive_repeating_char(s) that takes
 # a string s and returns the character that has the longest consecutive repeat.
 def longest_consecutive_repeating_char(s):
+  s = list(s)
+  c = 1
+  mydict = {}
 
-  last_char = ""
-  current_seq_len = 0
-  max_seq_len = 0
-  max_char = ''
-
-  for c in s:
-    if c == last_char:
-      current_seq_len += 1
-      if current_seq_len > max_seq_len:
-        max_seq_len = current_seq_len
-        max_char = c
+  for i in range(0, len(s) - 1):
+    if (s[i] != s[i + 1]):
+      if ((s[i] in mydict) and mydict[s[i]] > c):
+        continue
+      else:
+        mydict[s[i]] = c
+        c = 1
     else:
-      current_seq_len = 1
-      last_char = c
+      c = c + 1
 
-  return max_char
+  mydict[s[len(s) - 1]] = c
+
+  max = -1
+  for k, v in mydict.items():
+    if v > max:
+      max = v
+
+  ls = []
+  for k, v in mydict.items():
+    if v == max:
+      ls.append(k)
+
+  return ls
 
 
 # Part C. is_palindrome
