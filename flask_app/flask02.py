@@ -15,6 +15,14 @@ app = Flask(__name__)     # create an app
 def index():
     a_user = {'name': 'Varun', 'email': 'mogli@uncc.edu'}
     return render_template('index.html', user = a_user)
-
+@app.route('/notes')
+def get_notes():
+    notes = {1: {'title':'First_note', 'text':'This is my first note', 'date':'10-1-2020'},
+             2: {'title':'Second_note', 'text':'This is my second note', 'date':'10-2-2020'}
+             }
+    return render_template('notes.html', notes=notes)
+@app.route('/user/<username>')
+def get_user(username):
+    return "The user is " + str(username)
 
 app.run(host=os.getenv('IP', '127.0.0.1'),port=int(os.getenv('PORT', 5000)),debug=True)
