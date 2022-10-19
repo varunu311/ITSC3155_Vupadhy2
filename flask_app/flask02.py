@@ -21,6 +21,13 @@ def get_notes():
              2: {'title':'Second_note', 'text':'This is my second note', 'date':'10-2-2020'}
              }
     return render_template('notes.html', notes=notes)
+@app.route('/notes/<note_id>')
+def get_note(note_id):
+    notes = {1: {'title': 'First_note', 'text': 'This is my first note', 'date': '10-1-2020'},
+             2: {'title': 'Second_note', 'text': 'This is my second note', 'date': '10-2-2020'}
+             }
+    return render_template('note.html', note=notes[int(note_id)])
+
 @app.route('/user/<username>')
 def get_user(username):
     return "The user is " + str(username)
