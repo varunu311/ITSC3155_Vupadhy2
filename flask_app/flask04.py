@@ -12,10 +12,11 @@ app = Flask(__name__)     # create an app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flask_note_app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= False
+
 db.init_app(app)
 
 with app.app_context():
-    db.create_all() 
+    db.create_all()
 
 # @app.route is a decorator. It gives the function "index" special powers.
 # In this case it makes it so anyone going to "your-url/" makes this function
@@ -23,12 +24,13 @@ with app.app_context():
 @app.route('/')
 @app.route('/index')
 def index():
-    a_user =  db.session.query(User).filter_by(email='mogli@uncc.edu')
+    a_user =  db.session.query(User).filter_by(email="varunu311@gmail.com").one()
+    print(a_user)
     return render_template('index.html', user = a_user)
 
 @app.route('/notes')
 def get_notes():
-    a_user = db.session.query(User).filter_by(email='mogli@uncc.edu')
+    a_user = db.session.query(User).filter_by(email="varunu311@gmail.com").one()
     my_notes = db.session.query(Note).all()
     return render_template('notes.html', notes=my_notes, user=a_user)
 
@@ -48,13 +50,13 @@ def new_note():
         db.session.commit()
         return redirect(url_for('get_notes'))
     else:
-        a_user = db.session.query(User).filter_by(email='mogli@uncc.edu')
+        a_user = db.session.query(User).filter_by(email='varunu311@gmail.com').one()
         return render_template('new.html', user=a_user)
 
 @app.route('/notes/<note_id>')
 def get_note(note_id):
-    a_user = db.session.query(User).filter_by(email='mogli@uncc.edu')
-    my_note = db.session.query(Note).filter_by(id=note_id)
+    a_user = db.session.query(User).filter_by(email='varunu311@gmail.com').one()
+    my_note = db.session.query(Note).filter_by(id=note_id).one()
     return render_template('note.html', note=my_note, user = a_user)
 
 @app.route('/user/<username>')
