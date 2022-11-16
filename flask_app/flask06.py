@@ -2,16 +2,20 @@
 
 # imports
 import os                 # os is used to get environment variables IP & PORT
-from flask import Flask,request,redirect,url_for   # Flask is the web app that we will customize
+from flask import Flask,redirect,url_for,request # Flask is the web app that we will customize
+from flask import session
 from flask import render_template
 from database import db
 from models import Note as Note
 from models import User as User
+from forms import RegisterForm
+import bcrypt
 
 app = Flask(__name__)     # create an app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flask_note_app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= False
+app.config['SECRET_KEY'] = 'SE3155'
 
 db.init_app(app)
 
@@ -30,9 +34,12 @@ def index():
 
 @app.route('/notes')
 def get_notes():
-    a_user = db.session.query(User).filter_by(email="varunu311@gmail.com").one()
-    my_notes = db.session.query(Note).all()
-    return render_template('notes.html', notes=my_notes, user=a_user)
+    if session.get('user'):
+        my_notes = db.session.query(Note).filter_by(user_id=session['user_id']).all()
+        return render_template('notes.html', notes=my_notes, user=session['user'])
+
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/notes/new', methods=['GET','POST'])
 def new_note():
@@ -93,5 +100,31 @@ def get_note(note_id):
 @app.route('/user/<username>')
 def get_user(username):
     return "The user is " + str(username)
+
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    form = RegisterForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        # salt and hash password
+        h_password = bcrypt.hashpw(
+            request.form['password'].encode('utf-8'), bcrypt.gensalt())
+        # get entered user data
+        first_name = request.form['firstname']
+        last_name = request.form['lastname']
+        # create user model
+        new_user = User(first_name, last_name, request.form['email'], h_password)
+        # add user to database and commit
+        db.session.add(new_user)
+        db.session.commit()
+        # save the user's name to the session
+        session['user'] = first_name
+        session['user_id'] = new_user.id  # access id value from user model of this newly added user
+        # show user dashboard view
+        return redirect(url_for('get_notes'))
+
+    # something went wrong - display register view
+    return render_template('register.html', form=form)
 
 app.run(host=os.getenv('IP', '127.0.0.1'),port=int(os.getenv('PORT', 5000)),debug=True)
