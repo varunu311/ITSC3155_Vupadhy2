@@ -8,8 +8,9 @@ from flask import render_template
 from database import db
 from models import Note as Note
 from models import User as User
+from models import Comment as Comment
 from forms import RegisterForm
-from forms import LoginForm
+from forms import LoginForm, CommentForm
 import bcrypt
 
 app = Flask(__name__)     # create an app
@@ -98,10 +99,13 @@ def delete_note(note_id):
 
 @app.route('/notes/<note_id>')
 def get_note(note_id):
-    a_user = db.session.query(User).filter_by(email='varunu311@gmail.com').one()
-    my_note = db.session.query(Note).filter_by(id=note_id).one()
-    return render_template('note.html', note=my_note, user = a_user)
+    if session.get('user'):
+        my_note = db.session.query(Note).filter_by(id=note_id, user_id=session['user_id']).one()
+        return render_template('note.html', note=my_note, user = session['user'], form =form)
+    else:
+        return redirect(url_for('login'))
 
+        
 @app.route('/user/<username>')
 def get_user(username):
     return "The user is " + str(username)
@@ -153,6 +157,23 @@ def login():
     else:
         # form did not validate or GET request
         return render_template("login.html", form=login_form)
+
+@app.route('/notes/<note_id>/comment', methods=['POST'])
+def new_comment(note_id):
+    if session.get('user'):
+        comment_form = CommentForm()
+        # validate_on_submit only validates using POST
+        if comment_form.validate_on_submit():
+            # get comment data
+            comment_text = request.form['comment']
+            new_record = Comment(comment_text, int(note_id), session['user_id'])
+            db.session.add(new_record)
+            db.session.commit()
+
+        return redirect(url_for('get_note', note_id=note_id))
+
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():
